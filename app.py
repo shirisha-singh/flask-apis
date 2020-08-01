@@ -8,6 +8,7 @@
 #500 INTERNAL SERVER ERROR
 
 #With Flask RESTful we don't need to use jsonify because it is implicitly used
+import os
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
@@ -23,7 +24,11 @@ app = Flask(__name__)
 #Flask-SQLAlchemy tracks every change made to db even if not saved,
 #which takes up some resources, so we turn this off, SQLAlchemy already
 #has a better modification tracker
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+#DATABASE_URL is the name of the environment variable that heroku sets for us,
+#but this can't be accessed on local as postgresql is not installed on local & hence
+#letting sqlite uri gives us a fall-back option, now this would work on local as well
+#but would use sqlite, on heroku app would use postgresql
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'sheri'
 api = Api(app)
