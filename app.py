@@ -9,6 +9,7 @@
 
 #With Flask RESTful we don't need to use jsonify because it is implicitly used
 from flask import Flask
+from db import db
 from flask_restful import Api
 from flask_jwt import JWT
 from resources.user import UserRegister
@@ -19,6 +20,7 @@ from security import authenticate, identity
 # Resource is just a thing for an api to return, usually mapped in db
 
 app = Flask(__name__)
+db.init_app(app)
 #Easy to add resources now using Api
 #Flask-SQLAlchemy tracks every change made to db even if not saved,
 #which takes up some resources, so we turn this off, SQLAlchemy already
@@ -45,6 +47,4 @@ api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
 
 if __name__ == '__main__':
-    from db import db
-    db.init_app(app)
     app.run(port=5000, debug=True)#5000 is default though
