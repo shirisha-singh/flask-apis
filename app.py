@@ -9,7 +9,6 @@
 
 #With Flask RESTful we don't need to use jsonify because it is implicitly used
 from flask import Flask
-from db import db
 from flask_restful import Api
 from flask_jwt import JWT
 from resources.user import UserRegister
@@ -20,7 +19,6 @@ from security import authenticate, identity
 # Resource is just a thing for an api to return, usually mapped in db
 
 app = Flask(__name__)
-db.init_app(app)
 #Easy to add resources now using Api
 #Flask-SQLAlchemy tracks every change made to db even if not saved,
 #which takes up some resources, so we turn this off, SQLAlchemy already
@@ -30,10 +28,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'sheri'
 api = Api(app)
 
-#before the first request runs(any request), this code runs to create data.db file
-@app.before_first_request#flask decorator
-def create_tables():
-    db.create_all()
 
 jwt = JWT(app, authenticate, identity) #/auth -> this end point is created by jwt
 #from the auth end point, jwt token is returned which takes the username and the password which is then
